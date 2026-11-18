@@ -28,7 +28,10 @@ def main() -> None:
         assert sum(int(r['newly_guaranteed']) for r in selected) == 0
         print(f'C={radius:2d} m: {guaranteed}/{total}, equal-fire={equal:.6%}, newly guaranteed=0')
     for row in read('文件校验.csv'):
-        assert hashlib.sha256((root / row['相对路径']).read_bytes()).hexdigest() == row['SHA256']
+        data = (root / row['相对路径']).read_bytes()
+        if row['相对路径'].endswith('.csv'):
+            data = data.replace(b'\r', b'')
+        assert hashlib.sha256(data).hexdigest() == row['SHA256']
     print('关键统计与冻结图表文件校验通过。严格子集数据为封版汇总，未重算原生质量规则。')
 
 
